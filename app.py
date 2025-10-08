@@ -8,19 +8,29 @@ app = Flask(__name__)
 # Auto-register blueprints from /apps folder
 def register_blueprints():
     apps_dir = os.path.join(os.path.dirname(__file__), 'apps')
+
     for folder in os.listdir(apps_dir):
+        print(f"\n📂 Scanning app folder: {folder}")
         folder_path = os.path.join(apps_dir, folder)
-        if os.path.isdir(folder_path) and os.path.exists(os.path.join(folder_path, 'routes.py')):
-            module_name = f"apps.{folder}.routes"
-            try:
-                module = importlib.import_module(module_name)
-                if hasattr(module, 'bp'):
-                    app.register_blueprint(module.bp, url_prefix=f"/{folder}")
-                    print(f"✅ Registered blueprint: {folder}")
-                else:
-                    print(f"⚠️ No 'bp' found in {module_name}")
-            except Exception as e:
-                print(f"❌ Failed to import {module_name}: {e}")
+
+        # Check if the folder has a 'routes' subfolder
+        routes_path = os.path.join(folder_path, 'routes')
+        if os.path.isdir(routes_path):
+            for file in os.listdir(routes_path):
+                # Only import .py files (not __init__.py or others)
+                if file.endswith(".py") and not file.startswith("__"):
+                    module_name = f"apps.{folder}.routes.{file[:-3]}"
+                    route_name = file[:-3]  # remove the .py extension
+                    try:
+                        module = importlib.import_module(module_name)
+                        if hasattr(module, 'bp'):
+                            app.register_blueprint(module.bp, url_prefix=f"/{folder}/{route_name}")
+                            print(f"✅ Registered blueprint: {folder}/{file} → /{route_name}")
+                        else:
+                            print(f"⚠️ No 'bp' found in {module_name}")
+                    except Exception as e:
+                        print(f"❌ Failed to import {module_name}: {e}")
+
 
 # 🧩 CALL IT HERE!
 register_blueprints()
