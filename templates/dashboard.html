@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>API Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <h1>API Routes</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Endpoint</th>
+          <th>URL</th>
+          <th>Methods</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for route in routes %}
+        <tr>
+          <td>{{ route.endpoint }}</td>
+          <td>{{ route.url }}</td>
+          <td>{{ route.methods }}</td>
+          <td>{{ route.description }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>
