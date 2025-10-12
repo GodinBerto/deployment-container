@@ -1,8 +1,10 @@
 import sqlite3
+from config import Config
+
 
 def db_connection():
     # Connect to SQLite database (or create if it doesn't exist)
-    conn = sqlite3.connect("instance/procurement.db")
+    conn = sqlite3.connect(f"{Config.DATABASE_PATH}instance/procurement.db")
     conn.row_factory = sqlite3.Row
     return conn, conn.cursor()
 

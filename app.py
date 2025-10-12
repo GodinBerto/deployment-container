@@ -2,8 +2,13 @@ from flask import Flask, render_template
 import importlib
 import os
 import inspect
+from config import Config
 
 app = Flask(__name__)
+
+# Load configuration from the Config object
+app.config.from_object(Config)
+url = app.config['BASE_URL']
 
 # Auto-register blueprints from /apps folder
 def register_blueprints():
@@ -24,7 +29,7 @@ def register_blueprints():
                     try:
                         module = importlib.import_module(module_name)
                         if hasattr(module, 'bp'):
-                            app.register_blueprint(module.bp, url_prefix=f"/{folder}/{route_name}")
+                            app.register_blueprint(module.bp, url_prefix=f"/{url}/{folder}/{route_name}")
                             print(f"✅ Registered blueprint: {folder}/{file} → /{route_name}")
                         else:
                             print(f"⚠️ No 'bp' found in {module_name}")
