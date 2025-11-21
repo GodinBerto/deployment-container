@@ -10,7 +10,8 @@ app = Flask(__name__)
 
 # Load configuration from the Config object
 app.config.from_object(Config)
-url = app.config['BASE_URL']
+base_url = app.config['BASE_URL']
+
 
 # Auto-register blueprints from /apps folder
 def register_blueprints():
@@ -31,7 +32,7 @@ def register_blueprints():
                     try:
                         module = importlib.import_module(module_name)
                         if hasattr(module, 'bp'):
-                            app.register_blueprint(module.bp, url_prefix=f"/{url}/{folder}/{route_name}")
+                            app.register_blueprint(module.bp, url_prefix=f"/{base_url}/{folder}/{route_name}")
                             print(f"✅ Registered blueprint: {folder}/{file} → /{route_name}")
                         else:
                             print(f"⚠️ No 'bp' found in {module_name}")
@@ -46,19 +47,37 @@ register_blueprints()
 
 @app.route("/")
 def index():
-    # Introspect all routes for display
-    routes_info = []
+    routes_grouped = {}
+
     for rule in app.url_map.iter_rules():
-        if rule.endpoint != 'static':
-            view_func = app.view_functions[rule.endpoint]
-            doc = inspect.getdoc(view_func) or "No description"
-            routes_info.append({
-                "endpoint": rule.endpoint,
-                "url": str(rule),
-                "methods": ', '.join(rule.methods - {"HEAD", "OPTIONS"}),
-                "description": doc
-            })
-    return render_template("dashboard.html", routes=routes_info)
+        # Skip static and root route
+        if rule.endpoint == "static" or rule.rule == "/":
+            continue
+
+        # Get description from docstring
+        view_func = app.view_functions[rule.endpoint]
+        doc = inspect.getdoc(view_func) or "No description"
+
+        url = rule.rule
+
+        # Determine topic from first segment
+        topic = url.strip(f"{base_url}").split("/")[0] or None
+        if not topic:
+            continue  # skip root-level API if needed
+
+        if topic not in routes_grouped:
+            routes_grouped[topic] = []
+
+        routes_grouped[topic].append({
+            "endpoint": rule.endpoint.split(".")[-1],
+            "url": url,
+            "methods": ", ".join(rule.methods - {"HEAD", "OPTIONS"}),
+            "description": doc
+        })
+
+    return render_template("dashboard.html", routes_grouped=routes_grouped)
+
+
 
 
 # Prevent running this file directly

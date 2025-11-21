@@ -5,30 +5,54 @@
     <title>API Dashboard</title>
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
+      href="{{ url_for('static', filename='css/styles.css') }}"
     />
   </head>
   <body>
-    <h1>API Routes</h1>
-    <table>
-      <thead>
-        <tr>
-          <th>Endpoint</th>
-          <th>URL</th>
-          <th>Methods</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for route in routes %}
-        <tr>
-          <td>{{ route.endpoint }}</td>
-          <td>{{ route.url }}</td>
-          <td>{{ route.methods }}</td>
-          <td>{{ route.description }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="dashboard-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <h2 class="logo">API Panel</h2>
+        <ul class="menu">
+          <li class="active">Dashboard</li>
+          <li>Routes</li>
+          <li>Settings</li>
+        </ul>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <h1 class="title">API Routes</h1>
+
+        <div class="table-container">
+          {% for topic, routes in routes_grouped.items() %}
+          <h2 class="route-topic">{{ topic | capitalize }}</h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Endpoint</th>
+                <th>URL</th>
+                <th>Methods</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for route in routes %}
+              <tr>
+                <td>{{ route.endpoint }}</td>
+                <td>{{ route.url }}</td>
+                <td>{{ route.methods }}</td>
+                <td>{{ route.description }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+          {% endfor %}
+        </div>
+      </main>
+    </div>
   </body>
 </html>

@@ -1,0 +1,96 @@
+/* GENERAL */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f7ff;
+}
+
+/* MAIN LAYOUT */
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 230px;
+  background: #0a3d62; /* Deep blue */
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  font-size: 26px;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+}
+
+.menu li {
+  padding: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  background: transparent;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+.menu li:hover,
+.menu li.active {
+  background: #1b6ec2; /* lighter blue */
+}
+
+/* MAIN CONTENT */
+.main-content {
+  flex: 1;
+  padding: 30px;
+}
+
+.title {
+  margin-bottom: 20px;
+  color: #0a3d62;
+}
+
+/* TABLE STYLING */
+.table-container {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #1b6ec2;
+  color: white;
+}
+
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid #ccc;
+}
+
+tbody tr:hover {
+  background: #eef5ff;
+}
+
+.route-topic {
+  margin: 25px 0 10px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #0a3d62;
+  border-left: 4px solid #1b6ec2;
+  padding-left: 10px;
+}

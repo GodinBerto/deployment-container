@@ -35,8 +35,12 @@ def main():
     
     os.environ["FLASK_ENV"] = os.getenv("FLASK_ENV", "development")
     os.environ["FLASK_APP"] = os.getenv("FLASK_APP", "app.py")
-
-    subprocess.run([venv_python, "-m", "flask", "run", "--no-reload"])
+    os.environ["FLASK_DEBUG"] = "1"
+    
+    try:
+        subprocess.run([venv_python, "-m", "flask", "run", "--no-reload"])
+    except KeyboardInterrupt:
+            print("\n🛑 Server stopped by user. Exiting cleanly...")
     
     # cmd = input("\nPress Ctrl+R + Enter to rerun, or just Enter to quit: ")
     # if cmd.strip().lower() != "r":
