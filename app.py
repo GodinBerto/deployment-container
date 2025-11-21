@@ -3,6 +3,8 @@ import importlib
 import os
 import inspect
 from config import Config
+import traceback
+
 
 app = Flask(__name__)
 
@@ -33,8 +35,9 @@ def register_blueprints():
                             print(f"✅ Registered blueprint: {folder}/{file} → /{route_name}")
                         else:
                             print(f"⚠️ No 'bp' found in {module_name}")
-                    except Exception as e:
-                        print(f"❌ Failed to import {module_name}: {e}")
+                    except Exception:
+                        print(f"❌ Failed to import {module_name}:")
+                        traceback.print_exc()
 
 
 # 🧩 CALL IT HERE!
@@ -58,5 +61,6 @@ def index():
     return render_template("dashboard.html", routes=routes_info)
 
 
+# Prevent running this file directly
 if __name__ == "__main__":
-    app.run(debug=True)
+    raise RuntimeError("❌ Do NOT run app.py directly. Use: python starter.py")
