@@ -2,3 +2,4 @@ Flask
 Flask-cors
 Flask-Bcrypt
 Flask-JWT-Extended
+python-dotenv
