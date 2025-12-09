@@ -64,18 +64,66 @@ def join_waitlist():
         cursor.execute("SELECT id FROM Waitlist WHERE email = ?", (email,))
         if cursor.fetchone():
             conn.close()
-            return jsonify({'error': 'Email already on waitlist'}), 409
+            return jsonify({'error': 'Email already on waitlist', 'status': 409}), 409
         
         # Send welcome email
         welcome_html = f"""
         <html>
-            <body style="font-family: Arial, sans-serif;">
-                <h2>Welcome to Our Waitlist!</h2>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <h2 style="color: #111;">Welcome to Safo AI — The Future of Building Starts Here 🚀</h2>
+
                 <p>Hi {email or 'there'},</p>
-                <p>Thank you for joining our waitlist. We're excited to have you on board!</p>
-                <p>We'll notify you as soon as we have updates for you.</p>
-                <br>
-                <p>Best regards,<br>The Team</p>
+
+                <p>
+                    Thank you for joining the Safo AI waitlist — we’re thrilled to have you onboard!
+                </p>
+
+                <p>
+                    Safo AI is being built for one mission: to remove the friction, overwhelm, and guesswork 
+                    from building a business or project. Whether you're an entrepreneur, a founder, a student, 
+                    a freelancer, or a builder chasing a big idea, Safo gives you the tools, clarity, and 
+                    execution support you need to make real progress faster.
+                </p>
+
+                <h3>Here’s what you’ll unlock when Safo AI launches:</h3>
+
+                <p><strong>🚀 An AI Business Assistant That Actually Builds With You</strong><br>
+                    Get strategic guidance, answers, plans, and step-by-step execution — all personalized to your idea and stage. No more scattered information or confusing tutorials.
+                </p>
+
+                <p><strong>🛠 Project, Code & Product Builder Tools</strong><br>
+                    Turn concepts into finished projects. Generate workflows, documentation, prototypes, and even code. Safo reduces the technical barrier so you can focus on shaping your vision.
+                </p>
+
+                <p><strong>💸 Founder–Investor Smart Matching</strong><br>
+                    We’re introducing a new way for founders and investors to find each other based on traction, interest, and fit — not just luck. Our AI curates the best matches to accelerate your journey.
+                </p>
+
+                <p><strong>📚 A Learning Hub Designed for Builders</strong><br>
+                    Unlike traditional courses, Safo teaches you by building with you. Learn only what you need, when you need it, with mini-lessons, challenges, and progress tracking.
+                </p>
+
+                <h3>Why all this matters:</h3>
+
+                <p>
+                    Most tools today are either too fragmented, too static, or too complex. 
+                    Safo combines everything into one end-to-end building environment — guiding you, 
+                    organizing you, and empowering you to execute faster than ever.
+                </p>
+
+                <p>You’ve joined early, and that gives you:</p>
+                <ul>
+                    <li>✨ Priority access</li>
+                    <li>✨ Early feature rollouts</li>
+                    <li>✨ Chance to influence the platform</li>
+                    <li>✨ Beta-tester perks and exclusive updates</li>
+                </ul>
+
+                <p>
+                    We’ll notify you soon with behind-the-scenes updates, launch progress, and your early access link.
+                </p>
+
+                <p><strong>Welcome to the future of building —<br>The Safo Team</strong></p>
             </body>
         </html>
         """
@@ -84,7 +132,7 @@ def join_waitlist():
 
         if not email_sent:
             conn.close()
-            return jsonify({'error': 'Failed to send welcome email'}), 500
+            return jsonify({'error': 'Failed to send welcome email', 'status': 500}), 500
         
         # Insert into waitlist
         cursor.execute(
@@ -93,12 +141,19 @@ def join_waitlist():
         )
         conn.commit()
         
+        email_sent = send_email(email, 'Welcome to Our Waitlist', welcome_html)
+
+        if not email_sent:
+            conn.close()
+            return jsonify({'error': 'Failed to send welcome email', 'status': 500}), 500
+        
+        
         conn.close()
         
         return jsonify({
             'message': 'Successfully added to waitlist',
             'email': email,
-            'status': 'joined'
+            'status': 201
         }), 201
         
     except Exception as e:
@@ -129,7 +184,6 @@ def get_waitlist():
             waitlist.append({
                 'id': row['id'],
                 'email': row['email'],
-                'name': row['name'],
                 'status': row['status'],
                 'created_at': row['created_at'],
                 'invited_at': row['invited_at'],
