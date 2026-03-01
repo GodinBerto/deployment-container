@@ -10,7 +10,6 @@
   </head>
   <body>
     <div class="dashboard-container">
-      <!-- Sidebar -->
       <aside class="sidebar">
         <h2 class="logo">API Panel</h2>
         <ul class="menu">
@@ -20,9 +19,9 @@
         </ul>
       </aside>
 
-      <!-- Main Content -->
       <main class="main-content">
         <h1 class="title">API Routes</h1>
+        <p class="subtitle">Click any endpoint row to expand its test dropdown.</p>
 
         <div class="table-container">
           {% for topic, routes in routes_grouped.items() %}
@@ -40,19 +39,80 @@
 
             <tbody>
               {% for route in routes %}
-              <tr>
-                <td>{{ route.endpoint }}</td>
+              <tr
+                class="endpoint-row"
+                data-url="{{ route.url }}"
+                data-methods='{{ route.methods | tojson }}'
+                data-endpoint="{{ route.endpoint }}"
+                tabindex="0"
+                role="button"
+                aria-expanded="false"
+              >
+                <td>
+                  <div class="endpoint-cell">
+                    <span class="row-caret" aria-hidden="true">▸</span>
+                    <span class="endpoint-name">{{ route.endpoint }}</span>
+                  </div>
+                </td>
                 <td>{{ route.url }}</td>
-                <td>{{ route.methods }}</td>
+                <td class="method-list">
+                  {% for method in route.methods %}
+                  <span class="method method-{{ method | lower }}">{{ method }}</span>
+                  {% endfor %}
+                </td>
                 <td>{{ route.description }}</td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
-
           {% endfor %}
         </div>
       </main>
     </div>
+
+    <template id="inline-tester-template">
+      <div class="inline-tester">
+        <div class="inline-tester-header">
+          <h3 class="inline-tester-title">Test Endpoint</h3>
+          <button type="button" class="close-inline-tester">Close</button>
+        </div>
+
+        <div class="tester-row">
+          <label>Method</label>
+          <select class="tester-method"></select>
+
+          <label>URL</label>
+          <input class="tester-url" type="text" placeholder="/api/v1/app/route" />
+        </div>
+
+        <div class="tester-row tester-row-send">
+          <label>Query</label>
+          <input class="tester-query" type="text" placeholder="page=1&limit=10" />
+          <button class="send-request" type="button">Send Request</button>
+        </div>
+
+        <div class="tester-columns">
+          <div class="tester-column">
+            <label>Headers (JSON)</label>
+            <textarea class="tester-headers">{}</textarea>
+          </div>
+
+          <div class="tester-column">
+            <label>Body (JSON)</label>
+            <textarea class="tester-body">{}</textarea>
+          </div>
+        </div>
+
+        <div class="response-panel">
+          <div class="response-meta">
+            <span class="response-status">No request sent</span>
+            <span class="response-time"></span>
+          </div>
+          <pre class="response-body"></pre>
+        </div>
+      </div>
+    </template>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
   </body>
 </html>
