@@ -57,9 +57,8 @@ body {
 /* MAIN CONTENT */
 .main-content {
   flex: 1;
-  margin-left: 230px;
-  width: calc(100% - 230px);
-  padding: 30px;
+  margin-left: 260px;
+  padding: 40px;
 }
 
 .title {
